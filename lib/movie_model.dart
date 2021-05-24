@@ -9,8 +9,14 @@ class MovieModel{
   Future<TopRatedMovie> _ratedMovie;
   Future<TopRatedMovie> get ratedMovie => _ratedMovie;
 
+  final API api;
+
+  MovieModel({this.api = const API()});
+
+
+
   fetchMovie(){
-    _movie = API().fetchMovie();
+    _movie = api.fetchMovie();
 
 
   }

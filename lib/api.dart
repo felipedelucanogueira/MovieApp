@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/movie_model.dart';
 import 'movie.dart';
 
 
 class API{
 
-
+const API();
 
   Future<Movie>fetchMovie() async {
+
 
 
     final response =

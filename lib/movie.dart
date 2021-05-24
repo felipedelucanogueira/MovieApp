@@ -3,6 +3,7 @@ import 'dart:core';
 class Movie {
   List<MovieList> movies;
 
+  Movie({this.movies});
 
   Movie.fromJson(Map<String, dynamic> json) {
     var arrayMovie = json['results'] as List;
@@ -52,6 +53,10 @@ class MovieList {
   String release_date;
   String overview = "Ops esse Filme ainda não tem uma Sinopse";
   num vote_average;
+
+  MovieList({this.title,this.vote_average});
+
+
 
   MovieList.fromJson(Map<String, dynamic> json) {
     title = json['title'];
