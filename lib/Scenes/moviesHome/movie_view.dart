@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/movie_controller.dart';
-import 'package:movie_app/movie_details_view.dart';
-import 'package:movie_app/top_rated_movies_details_view.dart';
-import 'movie.dart';
+import 'package:movie_app/Scenes/moviesHome/movieViewModel.dart';
+import 'package:movie_app/Scenes/MovieDetails/movie_details_view.dart';
+import 'package:movie_app/Scenes/MovieDetails/top_rated_movies_details_view.dart';
+import 'package:movie_app/api/api.dart';
+
+import '../movie.dart';
 
 class MovieView extends StatefulWidget {
   @override
@@ -10,17 +12,41 @@ class MovieView extends StatefulWidget {
 }
 
 class _MovieViewState extends State<MovieView> {
-  final controller = MovieController();
+  final controller = MovieViewModel();
+
+  var _listController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.loadMovie();
+
+    _listController.addListener(() {
+      final pixel = _listController.position.pixels;
+
+      if (pixel == _listController.position.maxScrollExtent) {
+        controller.updateList();
+
+        // if (_listController.position.atEdge) {
+        //   if (_listController.position.pixels == 0) {
+        //
+        //   } else {
+        //      model.page +=1;
+        //      controller.updateList();
+        //     // print('chegou a  o final');
+        //     // print(model.page);
+        //   }
+        // }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    controller.loadMovie();
-    controller.loadRatedMovie();
-
-    return FutureBuilder<Movie>(
-      future: controller.movie,
+    return StreamBuilder<Movie>(
+      stream: controller.streamMovie.stream,
       builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+        if (snapshot.connectionState != ConnectionState.active) {
           return Center(
             child: Container(
                 width: 50,
@@ -105,8 +131,6 @@ class _MovieViewState extends State<MovieView> {
                           ),
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: NetworkImage(
-                                'https://scontent.fimp3-1.fna.fbcdn.net/v/t1.6435-9/80805869_2757212047706331_5025341886437523456_n.jpg?_nc_cat=100&ccb=1-3&_nc_sid=09cbfe&_nc_ohc=52GjzwvtiNMAX9uqNFz&_nc_ht=scontent.fimp3-1.fna&oh=9beccf8045967b15a0725d0aeca26595&oe=60B3B236'),
                           )
                         ],
                       ),
@@ -128,6 +152,7 @@ class _MovieViewState extends State<MovieView> {
                         height: MediaQuery.of(context).size.height * 0.5,
                         padding: EdgeInsets.only(top: 15),
                         child: ListView.separated(
+                            controller: _listController,
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             separatorBuilder: (context, index) =>
@@ -136,12 +161,14 @@ class _MovieViewState extends State<MovieView> {
                                 ),
                             itemCount: snapshot.data.movies.length,
                             itemBuilder: (context, index) {
-                              return MovieCard(index,
+                              return MovieCard(snapshot.data.movies[index],
                                   snapshot.data.movies[index].poster_path);
                             }),
                       ),
+                      Divider(),
                       Row(
                         children: [
+
                           Text(
                             '    MELHORES FILMES',
                             style: TextStyle(color: Colors.white),
@@ -162,44 +189,31 @@ class _MovieViewState extends State<MovieView> {
   }
 }
 
-class MovieCard extends StatefulWidget {
-  var imagePath;
-  var index;
-  MovieCard(this.index, this.imagePath);
+class MovieCard extends StatelessWidget {
+  final imagePath;
+  final MovieList movie;
+  MovieCard(this.movie, this.imagePath);
 
-  @override
-  _MovieCardState createState() => _MovieCardState();
-}
-
-class _MovieCardState extends State<MovieCard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-              width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.height * 0.454,
-              child: Card(
-                  color: Colors.black,
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w300${widget.imagePath}',
-                    fit: BoxFit.fill,
-                  ))),
-          Divider(),
-        ],
-      ),
+      child: Card(
+          color: Colors.black,
+          clipBehavior: Clip.antiAlias,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Image.network(
+            'https://image.tmdb.org/t/p/w300${movie.poster_path}' ==
+                    'https://image.tmdb.org/t/p/w300null'
+                ? 'https://www.freeshop.com.br/pdv/imagens/imagemindisponivel.png'
+                : 'https://image.tmdb.org/t/p/w300${movie.poster_path}',
+            fit: BoxFit.fill,
+          )),
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MovieDetailsView(widget.index)));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MovieDetailsView(movie)));
       },
     );
   }
@@ -211,17 +225,32 @@ class TopRatedMovieList extends StatefulWidget {
 }
 
 class _TopRatedMovieListState extends State<TopRatedMovieList> {
-  final controller = MovieController();
+  final controller = MovieViewModel();
+  var _listController = ScrollController();
+
   @override
+
+
+  void initState() {
+    super.initState();
+controller.loadRatedMovie();
+
+    _listController.addListener(() {
+      final pixel = _listController.position.pixels;
+      if (pixel == _listController.position.maxScrollExtent) {
+        controller.updateRatedList();
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
-    controller.loadRatedMovie();
-    return FutureBuilder<TopRatedMovie>(
-      future: controller.ratedMovie,
+    return StreamBuilder<TopRatedMovie>(
+      stream: controller.streamTopRatedMovie.stream,
       builder: (context, snapshot) {
-        controller.loadRatedMovie();
-        if (snapshot.connectionState != ConnectionState.done) {
-          controller.loadRatedMovie();
-          return CircularProgressIndicator();
+        if (snapshot.connectionState != ConnectionState.active) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
         if (snapshot.hasData) {
           return Container(
@@ -229,8 +258,9 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
             height: MediaQuery.of(context).size.height * 0.5,
             padding: EdgeInsets.only(top: 15),
             child: ListView.separated(
+                controller: _listController,
                 scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
+
                 separatorBuilder: (context, index) => VerticalDivider(
                       width: 20,
                     ),
@@ -239,24 +269,15 @@ class _TopRatedMovieListState extends State<TopRatedMovieList> {
                   return InkWell(
                     highlightColor: Colors.transparent,
                     hoverColor: Colors.transparent,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            height: MediaQuery.of(context).size.height * 0.454,
-                            child: Card(
-                                color: Colors.black,
-                                clipBehavior: Clip.antiAlias,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                child: Image.network(
-                                  'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[indexRated].poster_path}',
-                                  fit: BoxFit.fill,
-                                ))),
-                        Divider(),
-                      ],
-                    ),
+                    child: Card(
+                        color: Colors.black,
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Image.network(
+                          'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[indexRated].poster_path}',
+                          fit: BoxFit.fill,
+                        )),
                     onTap: () {
                       Navigator.push(
                           context,

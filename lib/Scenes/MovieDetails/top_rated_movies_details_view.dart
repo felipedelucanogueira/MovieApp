@@ -1,21 +1,24 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_app/movie.dart';
-import 'package:movie_app/movie_controller.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:movie_app/Scenes/moviesHome/movieViewModel.dart';
 
-class MovieDetailsView extends StatefulWidget {
-  final int index;
-  MovieDetailsView(this.index);
+import '../movie.dart';
+
+class TopRatedMoviesDetailsView extends StatefulWidget {
+  final indexRated;
+  TopRatedMoviesDetailsView(this.indexRated);
 
   @override
-  _MovieDetailsViewState createState() => _MovieDetailsViewState();
+  _TopRatedMoviesDetailsViewState createState() =>
+      _TopRatedMoviesDetailsViewState();
 }
 
-class _MovieDetailsViewState extends State<MovieDetailsView> {
-  final controller = MovieController();
+class _TopRatedMoviesDetailsViewState extends State<TopRatedMoviesDetailsView> {
+  final controller = MovieViewModel();
   @override
   Widget build(BuildContext context) {
-    controller.loadMovie();
+    controller.loadRatedMovie();
+
     return Scaffold(
         backgroundColor: Colors.black,
         body: SafeArea(
@@ -24,8 +27,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
               overScroll.disallowGlow();
               return;
             },
-            child: FutureBuilder<Movie>(
-                future: controller.movie,
+            child: StreamBuilder<TopRatedMovie>(
+                stream: controller.streamTopRatedMovie.stream,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Material(
@@ -50,7 +53,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                   primary: Colors.white),
                               onPressed: () {
                                 setState(() {
-                                  controller.loadMovie();
+                                  controller.loadRatedMovie();
                                 });
                               },
                               child: Text(
@@ -63,8 +66,8 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                       ),
                     );
                   }
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    controller.loadMovie();
+                  if (snapshot.connectionState != ConnectionState.active) {
+                    controller.loadRatedMovie();
                     return Center(
                       child: Container(
                           width: 50,
@@ -81,18 +84,13 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         Divider(),
                         ElevatedButton(
                             onPressed: () {
-                              controller.loadMovie();
+                              controller.loadRatedMovie();
                             },
                             child: Text('Tentar Novamente'))
                       ],
                     );
                   }
                   if (snapshot.hasData) {
-                    if(snapshot.data.movies[widget.index].overview == null){
-                      var texto = 'Ops ainda nao temos uma descrição';
-                      snapshot.data.movies[widget.index].overview = texto;
-                    }
-
                     return SingleChildScrollView(
                       child: Column(
                         children: [
@@ -138,7 +136,9 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      snapshot.data.movies[widget.index]
+                                      snapshot
+                                          .data
+                                          .ratedmovies[widget.indexRated]
                                           .release_date,
                                       style: TextStyle(color: Colors.white),
                                     ),
@@ -152,7 +152,9 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      snapshot.data.movies[widget.index]
+                                      snapshot
+                                          .data
+                                          .ratedmovies[widget.indexRated]
                                           .vote_average
                                           .toString(),
                                       style: TextStyle(color: Colors.white),
@@ -170,16 +172,30 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(15)),
-                                      child: Image.network(
-                                          'https://image.tmdb.org/t/p/w300${snapshot.data.movies[widget.index].poster_path}')))
+                                      child: Stack(
+                                        fit: StackFit.loose,
+                                        children: [
+                                          Image.network(
+                                              'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[widget.indexRated].poster_path}'),
+                                          Positioned(
+                                            right: 0,
+                                            child: IconButton(
+                                                onPressed: () {},
+                                                icon: FaIcon(
+                                                  FontAwesomeIcons.heart,
+                                                  color: Colors.white,
+                                                )),
+                                          )
+                                        ],
+                                      )))
                             ],
                           ),
                           Divider(
-                            height: 30,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
                           Text(
-                            snapshot.data.movies[widget.index].title,
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            snapshot.data.ratedmovies[widget.indexRated].title,
+                            style: TextStyle(color: Colors.white, fontSize: 17),
                             textAlign: TextAlign.center,
                           ),
                           Divider(
@@ -193,7 +209,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                               child: Text(
                                 'SINOPSE',
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: 20),
+                                    color: Colors.black, fontSize: 17),
                                 textAlign: TextAlign.center,
                               )),
                           Divider(
@@ -203,9 +219,10 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                               padding:
                                   const EdgeInsets.only(right: 30, left: 30),
                               child: Text(
-                                snapshot.data.movies[widget.index].overview,
+                                snapshot.data.ratedmovies[widget.indexRated]
+                                    .overview,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                    color: Colors.white, fontSize: 13),
                                 textAlign: TextAlign.justify,
                               )),
                         ],

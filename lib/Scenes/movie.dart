@@ -5,10 +5,12 @@ class Movie {
 
   Movie({this.movies});
 
+
+
   Movie.fromJson(Map<String, dynamic> json) {
     var arrayMovie = json['results'] as List;
 
-    movies = arrayMovie.map((item) {
+      movies = arrayMovie.map((item) {
       return MovieList.fromJson(item);
     }).toList();
 
@@ -17,6 +19,8 @@ class Movie {
 
 class TopRatedMovie{
   List<TopRatedMovieList> ratedmovies;
+
+  TopRatedMovie({this.ratedmovies});
 
   TopRatedMovie.fromJson(Map<String, dynamic> json){
     var arrayTopRatedMovie = json['results'] as List;
@@ -31,10 +35,11 @@ class TopRatedMovie{
 }
 
 class TopRatedMovieList {
+  int id;
   String title;
   String poster_path;
   String release_date;
-  String overview = 'Ops Esse filme ainda não Possui uma Descrição';
+  String overview;
   num vote_average;
 
   TopRatedMovieList.fromJson(Map<String, dynamic> json) {
@@ -48,10 +53,14 @@ class TopRatedMovieList {
 }
 
 class MovieList {
+
+  Future<List<MovieList>> movie;
+
+  int id;
   String title;
   String poster_path;
   String release_date;
-  String overview = "Ops esse Filme ainda não tem uma Sinopse";
+  String overview;
   num vote_average;
 
   MovieList({this.title,this.vote_average});
@@ -59,6 +68,7 @@ class MovieList {
 
 
   MovieList.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     title = json['title'];
     poster_path = json['poster_path'];
     release_date = json['release_date'];

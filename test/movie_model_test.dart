@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:movie_app/api.dart';
-import 'package:movie_app/movie.dart';
-import 'package:movie_app/movie_model.dart';
+import 'package:movie_app/api/api.dart';
+import 'package:movie_app/Scenes/movie.dart';
+import 'package:movie_app/model/movie_model.dart';
 
 
 void main(){
