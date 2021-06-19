@@ -17,6 +17,9 @@ class _MovieViewState extends State<MovieView> {
   var _listController = ScrollController();
 
   @override
+
+
+
   void initState() {
     super.initState();
     controller.loadMovie();
@@ -24,26 +27,22 @@ class _MovieViewState extends State<MovieView> {
     _listController.addListener(() {
       final pixel = _listController.position.pixels;
 
-      if (pixel == _listController.position.maxScrollExtent) {
-        controller.updateList();
-
-        // if (_listController.position.atEdge) {
-        //   if (_listController.position.pixels == 0) {
-        //
-        //   } else {
-        //      model.page +=1;
-        //      controller.updateList();
-        //     // print('chegou a  o final');
-        //     // print(model.page);
-        //   }
-        // }
-      }
+      // if (pixel == _listController.position.maxScrollExtent) {
+      //   controller.updateList();
     });
+    dispose(){
+      controller.streamMovie.close();
+      controller.streamTopRatedMovie.close();
+
+    }
   }
 
+
   @override
+
   Widget build(BuildContext context) {
     return StreamBuilder<Movie>(
+
       stream: controller.streamMovie.stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.active) {
@@ -152,6 +151,7 @@ class _MovieViewState extends State<MovieView> {
                         height: MediaQuery.of(context).size.height * 0.5,
                         padding: EdgeInsets.only(top: 15),
                         child: ListView.separated(
+
                             controller: _listController,
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
@@ -161,6 +161,9 @@ class _MovieViewState extends State<MovieView> {
                                 ),
                             itemCount: snapshot.data.movies.length,
                             itemBuilder: (context, index) {
+                              if (index == snapshot.data.movies.length - 1) {
+                                controller.updateList();
+                              }
                               return MovieCard(snapshot.data.movies[index],
                                   snapshot.data.movies[index].poster_path);
                             }),
@@ -175,7 +178,9 @@ class _MovieViewState extends State<MovieView> {
                           )
                         ],
                       ),
-                      TopRatedMovieList()
+
+                      TopRatedMovieList(),
+
                     ],
                   ),
                 ),
@@ -227,9 +232,7 @@ class TopRatedMovieList extends StatefulWidget {
 class _TopRatedMovieListState extends State<TopRatedMovieList> {
   final controller = MovieViewModel();
   var _listController = ScrollController();
-
   @override
-
 
   void initState() {
     super.initState();
@@ -258,6 +261,7 @@ controller.loadRatedMovie();
             height: MediaQuery.of(context).size.height * 0.5,
             padding: EdgeInsets.only(top: 15),
             child: ListView.separated(
+
                 controller: _listController,
                 scrollDirection: Axis.horizontal,
 
@@ -266,6 +270,9 @@ controller.loadRatedMovie();
                     ),
                 itemCount: snapshot.data.ratedmovies.length,
                 itemBuilder: (context, indexRated) {
+                  if (indexRated == snapshot.data.ratedmovies.length - 1) {
+                    controller.updateRatedList();
+                  }
                   return InkWell(
                     highlightColor: Colors.transparent,
                     hoverColor: Colors.transparent,

@@ -34,51 +34,59 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                     RotatedBox(
                       quarterTurns: 0,
                       child: Column(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           FloatingActionButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            backgroundColor:
-                            Colors.white.withOpacity(0.2),
+                            backgroundColor: Colors.white.withOpacity(0.2),
                             child: Icon(
                               Icons.arrow_back_ios,
                             ),
                           ),
                           Divider(
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: FaIcon(
-                                FontAwesomeIcons.heart,
-                                color: Colors.white,
-                              )),
+                          FutureBuilder<String>(
+                            future:controller.movieId(widget.movie.id),
+                             builder:(context,snapshot){
+                              var isFavorite = snapshot.data != null;
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if(isFavorite){
+                                        controller.deleteMovie(widget.movie.id);
+                                      }else{
+                                        controller.saveUser(widget.movie.id, widget.movie);
+                                      }
+                                    });
+                                  },
+                                  icon: FaIcon(
+                                    isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+                                    color: isFavorite ? Colors.red : Colors.white,
+                                  ));
+
+                             },
+
+                          ),
                           Text(
                             'Favoritar',
                             style: TextStyle(color: Colors.white),
                           ),
                           Divider(
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
                           Icon(
                             Icons.calendar_today_outlined,
                             color: Colors.white,
                           ),
                           Text(
-                           widget.movie.release_date,
+                            widget.movie.release_date,
                             style: TextStyle(color: Colors.white),
                           ),
                           Divider(
-                            height:
-                            MediaQuery.of(context).size.height *
-                                0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
                           Icon(
                             Icons.star_border,
@@ -88,8 +96,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                             height: 5,
                           ),
                           Text(
-                           widget.movie.vote_average
-                                .toString(),
+                            widget.movie.vote_average.toString(),
                             style: TextStyle(color: Colors.white),
                           ),
                           Divider(),
@@ -97,20 +104,17 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                       ),
                     ),
                     Container(
-                        width:
-                        MediaQuery.of(context).size.width * 0.7,
+                        width: MediaQuery.of(context).size.width * 0.7,
                         child: Card(
                             color: Colors.black,
                             clipBehavior: Clip.antiAlias,
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(15)),
+                                borderRadius: BorderRadius.circular(15)),
                             child: Stack(
                               fit: StackFit.loose,
                               children: [
                                 Image.network(
                                     'https://image.tmdb.org/t/p/w300${widget.movie.poster_path}'),
-
                               ],
                             )))
                   ],
@@ -133,20 +137,36 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                         color: Colors.white),
                     child: Text(
                       'SINOPSE',
-                      style: TextStyle(
-                          color: Colors.black, fontSize: 17),
+                      style: TextStyle(color: Colors.black, fontSize: 17),
                       textAlign: TextAlign.center,
                     )),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      controller.saveFavorite();
+                    });
+                  },
+                  child: Text('Salvar Todos'),
+                ),
+                FutureBuilder<String>(
+                    future: controller.movieId(widget.movie.id),
+                    builder: (
+                      context,
+                      snapshot,
+                    ) {
+                      return Text(snapshot.data ?? 'nenhum filme adicionado',
+                          style: TextStyle(color: Colors.white));
+                    }),
                 Divider(
                   height: 30,
                 ),
                 Padding(
-                    padding:
-                    const EdgeInsets.only(right: 30, left: 30),
+                    padding: const EdgeInsets.only(right: 30, left: 30),
                     child: Text(
-                      widget.movie.overview.isNotEmpty ? widget.movie.overview  : 'Sinopse não Disponivel',
-                      style: TextStyle(
-                          color: Colors.white, fontSize: 13),
+                      widget.movie.overview.isNotEmpty
+                          ? widget.movie.overview
+                          : 'Sinopse não Disponivel',
+                      style: TextStyle(color: Colors.white, fontSize: 13),
                       textAlign: TextAlign.justify,
                     )),
               ],
