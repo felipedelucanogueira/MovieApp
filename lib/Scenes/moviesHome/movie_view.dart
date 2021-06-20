@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:movie_app/Scenes/moviesHome/movieViewModel.dart';
 import 'package:movie_app/Scenes/MovieDetails/movie_details_view.dart';
 import 'package:movie_app/Scenes/MovieDetails/top_rated_movies_details_view.dart';
@@ -37,10 +39,10 @@ class _MovieViewState extends State<MovieView> {
     }
   }
 
-
+  DateTime now = DateTime.now();
   @override
-
   Widget build(BuildContext context) {
+    initializeDateFormatting('pt_br');
     return StreamBuilder<Movie>(
 
       stream: controller.streamMovie.stream,
@@ -110,14 +112,14 @@ class _MovieViewState extends State<MovieView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Hey Felipe',
+                                'Olá Visitante',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                                 textAlign: TextAlign.left,
                               ),
                               Divider(),
-                              Text(
-                                'Today , 24 February',
+                              Text('Hoje ,${DateFormat.MMMd('pt_BR').format(now)}'
+                                  ,
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.w100,
@@ -129,7 +131,8 @@ class _MovieViewState extends State<MovieView> {
                             width: MediaQuery.of(context).size.width * 0.25,
                           ),
                           CircleAvatar(
-                            radius: 25,
+                          backgroundColor: Colors.black,
+                            radius: 30,
                           )
                         ],
                       ),
@@ -224,6 +227,8 @@ class MovieCard extends StatelessWidget {
   }
 }
 
+
+
 class TopRatedMovieList extends StatefulWidget {
   @override
   _TopRatedMovieListState createState() => _TopRatedMovieListState();
@@ -232,7 +237,9 @@ class TopRatedMovieList extends StatefulWidget {
 class _TopRatedMovieListState extends State<TopRatedMovieList> {
   final controller = MovieViewModel();
   var _listController = ScrollController();
+
   @override
+
 
   void initState() {
     super.initState();
@@ -247,6 +254,7 @@ controller.loadRatedMovie();
   }
 
   Widget build(BuildContext context) {
+
     return StreamBuilder<TopRatedMovie>(
       stream: controller.streamTopRatedMovie.stream,
       builder: (context, snapshot) {
@@ -262,6 +270,7 @@ controller.loadRatedMovie();
             padding: EdgeInsets.only(top: 15),
             child: ListView.separated(
 
+
                 controller: _listController,
                 scrollDirection: Axis.horizontal,
 
@@ -270,10 +279,12 @@ controller.loadRatedMovie();
                     ),
                 itemCount: snapshot.data.ratedmovies.length,
                 itemBuilder: (context, indexRated) {
+
                   if (indexRated == snapshot.data.ratedmovies.length - 1) {
                     controller.updateRatedList();
                   }
                   return InkWell(
+
                     highlightColor: Colors.transparent,
                     hoverColor: Colors.transparent,
                     child: Card(
@@ -290,7 +301,7 @@ controller.loadRatedMovie();
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  TopRatedMoviesDetailsView(indexRated)));
+                                  TopRatedMoviesDetailsView(snapshot.data.ratedmovies[indexRated])));
                     },
                   );
                 }),
@@ -300,4 +311,6 @@ controller.loadRatedMovie();
       },
     );
   }
+
 }
+

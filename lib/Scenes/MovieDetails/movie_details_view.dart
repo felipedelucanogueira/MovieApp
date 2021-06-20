@@ -13,6 +13,7 @@ class MovieDetailsView extends StatefulWidget {
 }
 
 class _MovieDetailsViewState extends State<MovieDetailsView> {
+
   final controller = MovieViewModel();
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                       if(isFavorite){
                                         controller.deleteMovie(widget.movie.id);
                                       }else{
-                                        controller.saveUser(widget.movie.id, widget.movie);
+                                        controller.saveMovie(widget.movie.id, widget.movie);
                                       }
                                     });
                                   },
@@ -140,23 +141,6 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                       style: TextStyle(color: Colors.black, fontSize: 17),
                       textAlign: TextAlign.center,
                     )),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      controller.saveFavorite();
-                    });
-                  },
-                  child: Text('Salvar Todos'),
-                ),
-                FutureBuilder<String>(
-                    future: controller.movieId(widget.movie.id),
-                    builder: (
-                      context,
-                      snapshot,
-                    ) {
-                      return Text(snapshot.data ?? 'nenhum filme adicionado',
-                          style: TextStyle(color: Colors.white));
-                    }),
                 Divider(
                   height: 30,
                 ),

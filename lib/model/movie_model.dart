@@ -4,7 +4,6 @@ import 'package:movie_app/storage/sharedPreferencesAdapter.dart';
 import '../Scenes/movie.dart';
 
 class MovieModel {
-
   final InternalStorageAdapter internalStorage = SharedPreferencesAdapter();
 
   int page = 1;
@@ -13,7 +12,6 @@ class MovieModel {
   Future<Movie> _movie;
   Future<Movie> get movie => _movie;
 
-
   Future<TopRatedMovie> _ratedMovie;
   Future<TopRatedMovie> get ratedMovie => _ratedMovie;
 
@@ -21,40 +19,47 @@ class MovieModel {
 
   MovieModel({this.api = const API()});
 
-   saveMovie(int id,MovieList saveMovie){
-     internalStorage.saveMovie(id, saveMovie.toMap());
+  saveMovie(int id, MovieList saveMovie) {
+    internalStorage.saveMovie(id, saveMovie.toMap());
+  }
 
-   }
+  saveBestMovies(int idb) async{
+      await internalStorage.saveBestMovies(idb);
+  }
+    deleteBestMovies(int idb) async{
+        await internalStorage.deleteMovie(idb);
+    }
 
-   saveFavorite(List<Map<String, dynamic>> data) async{
+  //
+  // saveFavorite(List<Map<String, dynamic>> data) async{
+  //   await internalStorage.saveMovieList(data);
+  //
+  // }
 
-     await internalStorage.saveMovieList(data);
-   }
+  // Future<String> getMovieList() async{
+  //    final movieData = await internalStorage.getMovieList();
+  //    return ' ';
+  //
+  //  }
 
+  Future<String> getMovieId(int id) async {
+    final movieData = await internalStorage.getMovieId(id);
+    final MovieList movieResult = MovieList.fromJson(movieData);
+    return movieResult.title;
+  }
 
+  Future<int> getBestMovieId(int id) async {
+     final idb = await internalStorage.getBestMovieId(id);
 
-  Future<String> getMovieList() async{
-     final movieData = await internalStorage.getMovieList();
-     print(movieData);
-     return ' ';
+     return idb;
+  }
 
-   }
-
-   Future<String> getMovieId(int id) async{
-     final movieData = await internalStorage.getMovieId(id);
-     final MovieList movieResult = MovieList.fromJson(movieData);
-     return movieResult.title;
-
-   }
-
-   deleteMovie(int id) async{
+  deleteMovie(int id) async {
     await internalStorage.deleteMovie(id);
-
-   }
+  }
 
   fetchMovie() {
     _movie = api.fetchMovie(page: page);
-
   }
 
   fetchRatedMovie() {

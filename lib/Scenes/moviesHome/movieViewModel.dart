@@ -12,15 +12,16 @@ class MovieViewModel {
   StreamController<TopRatedMovie> streamTopRatedMovie = StreamController();
 
   Future<String> movieId(int id)  => model.getMovieId(id);
+  Future<int> BestmovieId(int id)  => model.getBestMovieId(id);
   List<MovieList> cachedMovie = [];
 
   List<TopRatedMovieList> cachedRatedMovie = [];
 
-    saveFavorite() async{
-      final json = cachedMovie.map((e) => (e.toMap())).toList();
-      //await model.saveFavorite(json);
-      await model.getMovieList();
-    }
+    // saveFavorite() async{
+    //   final json = cachedMovie.map((e) => (e.toMap())).toList();
+    //   //await model.saveFavorite(json);
+    //   await model.getMovieList();
+    // }
 
   loadMovie() {
     model.fetchMovie();
@@ -49,14 +50,18 @@ class MovieViewModel {
     });
   }
 
-  saveUser(int id , MovieList saveMovie){
+  saveMovie(int id , MovieList saveMovie){
     model.saveMovie(id ,saveMovie);
   }
+  saveBestMovies(int id) async{
+   await model.saveBestMovies(id);
+  }
 
-
-  deleteMovie(int id){
-
-    model.deleteMovie(id);
+  deleteMovie(int idb){
+    model.deleteMovie(idb);
+  }
+    deleteBestMovies(int idb) async{
+   await model.deleteBestMovies(idb);
   }
 
   loadRatedMovie() {

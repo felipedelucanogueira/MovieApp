@@ -37,6 +37,7 @@ class TopRatedMovieList {
   num vote_average;
 
   TopRatedMovieList.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     title = json['title'];
     poster_path = json['poster_path'];
     release_date = json['release_date'];

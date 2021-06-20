@@ -2,8 +2,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class SQLAdapter {
-  static Database _database;
 
+  static Database _database;
   Future<Database> get database async {
     if (_database != null) {
       return _database;
@@ -18,13 +18,9 @@ class SQLAdapter {
     }, version: 1);
   }
 
-
   void saveMovie() async{
     final Database db = await database;
     var movie;
     await db.insert('Favorites', movie);
-
   }
-
-
 }

@@ -5,8 +5,8 @@ import 'package:movie_app/Scenes/moviesHome/movieViewModel.dart';
 import '../movie.dart';
 
 class TopRatedMoviesDetailsView extends StatefulWidget {
-  final indexRated;
-  TopRatedMoviesDetailsView(this.indexRated);
+  final TopRatedMovieList ratedmovies;
+  TopRatedMoviesDetailsView(this.ratedmovies);
 
   @override
   _TopRatedMoviesDetailsViewState createState() =>
@@ -20,218 +20,146 @@ class _TopRatedMoviesDetailsViewState extends State<TopRatedMoviesDetailsView> {
     controller.loadRatedMovie();
 
     return Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
-          child: NotificationListener<OverscrollIndicatorNotification>(
-            onNotification: (overScroll) {
-              overScroll.disallowGlow();
-              return;
-            },
-            child: StreamBuilder<TopRatedMovie>(
-                stream: controller.streamTopRatedMovie.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Material(
-                      color: Colors.black,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(
-                              'OPS....Falha ao carregar',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                            Container(
-                                decoration: BoxDecoration(),
-                                child: CircleAvatar(
-                                    radius: 100,
-                                    backgroundImage: NetworkImage(
-                                        'https://i.pinimg.com/originals/c5/f0/a4/c5f0a40e2e509e67730eb5d6edcb5d38.gif'))),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.white),
-                              onPressed: () {
-                                setState(() {
-                                  controller.loadRatedMovie();
-                                });
-                              },
-                              child: Text(
-                                'Tentar Novamente',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.connectionState != ConnectionState.active) {
-                    controller.loadRatedMovie();
-                    return Center(
-                      child: Container(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.white,
-                          )),
-                    );
-                  }
-                  if (snapshot.hasError) {
-                    return Column(
-                      children: [
-                        Text('Erro ao Carregar os Filmes'),
-                        Divider(),
-                        ElevatedButton(
-                            onPressed: () {
-                              controller.loadRatedMovie();
-                            },
-                            child: Text('Tentar Novamente'))
-                      ],
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    return SingleChildScrollView(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overScroll) {
+            overScroll.disallowGlow();
+            return;
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    RotatedBox(
+                      quarterTurns: 0,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              RotatedBox(
-                                quarterTurns: 8,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    FloatingActionButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      backgroundColor:
-                                          Colors.white.withOpacity(0.2),
-                                      child: Icon(
-                                        Icons.arrow_back_ios,
-                                      ),
-                                    ),
-                                    Divider(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.07,
-                                    ),
-                                    Icon(
-                                      Icons.timer_rounded,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      '2h 6min',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Divider(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.08,
-                                    ),
-                                    Icon(
-                                      Icons.calendar_today_outlined,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      snapshot
-                                          .data
-                                          .ratedmovies[widget.indexRated]
-                                          .release_date,
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Divider(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.08,
-                                    ),
-                                    Icon(
-                                      Icons.star_border,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      snapshot
-                                          .data
-                                          .ratedmovies[widget.indexRated]
-                                          .vote_average
-                                          .toString(),
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    Divider(),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.7,
-                                  child: Card(
-                                      color: Colors.black,
-                                      clipBehavior: Clip.antiAlias,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      child: Stack(
-                                        fit: StackFit.loose,
-                                        children: [
-                                          Image.network(
-                                              'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[widget.indexRated].poster_path}'),
-                                          Positioned(
-                                            right: 0,
-                                            child: IconButton(
-                                                onPressed: () {},
-                                                icon: FaIcon(
-                                                  FontAwesomeIcons.heart,
-                                                  color: Colors.white,
-                                                )),
-                                          )
-                                        ],
-                                      )))
-                            ],
+                          FloatingActionButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            backgroundColor: Colors.white.withOpacity(0.2),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                            ),
                           ),
                           Divider(
                             height: MediaQuery.of(context).size.height * 0.05,
                           ),
+                          FutureBuilder<String>(
+                            future: controller.movieId(widget.ratedmovies.id),
+                            builder: (context, snapshot) {
+                              var isFavorite = snapshot.data != null;
+                              return IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (isFavorite) {
+                                        controller.saveBestMovies(widget.ratedmovies.id);
+                                        print('ok');
+
+                                      } else {
+                                             controller.deleteMovie(widget.ratedmovies.id);
+                                      }
+                                    });
+                                  },
+                                  icon: FaIcon(
+                                    isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
+                                    color: isFavorite ? Colors.red : Colors.white,
+                                  ));
+                            },
+                          ),
                           Text(
-                            snapshot.data.ratedmovies[widget.indexRated].title,
-                            style: TextStyle(color: Colors.white, fontSize: 17),
-                            textAlign: TextAlign.center,
+                            'Favoritar',
+                            style: TextStyle(color: Colors.white),
                           ),
                           Divider(
-                            height: 30,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
-                          Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white),
-                              child: Text(
-                                'SINOPSE',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 17),
-                                textAlign: TextAlign.center,
-                              )),
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            widget.ratedmovies.release_date,
+                            style: TextStyle(color: Colors.white),
+                          ),
                           Divider(
-                            height: 30,
+                            height: MediaQuery.of(context).size.height * 0.05,
                           ),
-                          Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 30, left: 30),
-                              child: Text(
-                                snapshot.data.ratedmovies[widget.indexRated]
-                                    .overview,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                                textAlign: TextAlign.justify,
-                              )),
+                          Icon(
+                            Icons.star_border,
+                            color: Colors.white,
+                          ),
+                          Divider(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.ratedmovies.vote_average.toString(),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Divider(),
                         ],
                       ),
-                    );
-                  }
-                  return Container();
-                }),
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: Card(
+                            color: Colors.black,
+                            clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Stack(
+                              fit: StackFit.loose,
+                              children: [
+                                Image.network(
+                                    'https://image.tmdb.org/t/p/w300${widget.ratedmovies.poster_path}'),
+                              ],
+                            )))
+                  ],
+                ),
+                Divider(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                ),
+                Text(
+                  widget.ratedmovies.title,
+                  style: TextStyle(color: Colors.white, fontSize: 17),
+                  textAlign: TextAlign.center,
+                ),
+                Divider(
+                  height: 30,
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width * 0.45,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white),
+                    child: Text(
+                      'SINOPSE',
+                      style: TextStyle(color: Colors.black, fontSize: 17),
+                      textAlign: TextAlign.center,
+                    )),
+                Divider(
+                  height: 30,
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(right: 30, left: 30),
+                    child: Text(
+                      widget.ratedmovies.overview.isNotEmpty
+                          ? widget.ratedmovies.overview
+                          : 'Sinopse não Disponivel',
+                      style: TextStyle(color: Colors.white, fontSize: 13),
+                      textAlign: TextAlign.justify,
+                    )),
+              ],
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
