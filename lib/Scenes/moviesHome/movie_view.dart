@@ -5,8 +5,8 @@ import 'package:movie_app/Scenes/moviesHome/movieViewModel.dart';
 import 'package:movie_app/Scenes/MovieDetails/movie_details_view.dart';
 import 'package:movie_app/Scenes/MovieDetails/top_rated_movies_details_view.dart';
 import 'package:movie_app/api/api.dart';
-
 import '../movie.dart';
+
 
 class MovieView extends StatefulWidget {
   @override
@@ -16,35 +16,16 @@ class MovieView extends StatefulWidget {
 class _MovieViewState extends State<MovieView> {
   final controller = MovieViewModel();
 
-  var _listController = ScrollController();
-
   @override
-
-
-
   void initState() {
     super.initState();
     controller.loadMovie();
-
-    _listController.addListener(() {
-      final pixel = _listController.position.pixels;
-
-      // if (pixel == _listController.position.maxScrollExtent) {
-      //   controller.updateList();
-    });
-    dispose(){
-      controller.streamMovie.close();
-      controller.streamTopRatedMovie.close();
-
-    }
   }
 
-  DateTime now = DateTime.now();
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('pt_br');
     return StreamBuilder<Movie>(
-
       stream: controller.streamMovie.stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.active) {
@@ -102,60 +83,12 @@ class _MovieViewState extends State<MovieView> {
                   },
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Olá Visitante',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                                textAlign: TextAlign.left,
-                              ),
-                              Divider(),
-                              Text('Hoje ,${DateFormat.MMMd('pt_BR').format(now)}'
-                                  ,
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w100,
-                                    fontSize: 15),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                          ),
-                          CircleAvatar(
-                          backgroundColor: Colors.black,
-                            radius: 30,
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            '     EM BREVE',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Divider()
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      ),
+                      Header(),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.5,
+                        height: MediaQuery.of(context).size.height * 0.65,
                         padding: EdgeInsets.only(top: 15),
                         child: ListView.separated(
-
-                            controller: _listController,
                             scrollDirection: Axis.horizontal,
                             shrinkWrap: true,
                             separatorBuilder: (context, index) =>
@@ -171,19 +104,6 @@ class _MovieViewState extends State<MovieView> {
                                   snapshot.data.movies[index].poster_path);
                             }),
                       ),
-                      Divider(),
-                      Row(
-                        children: [
-
-                          Text(
-                            '    MELHORES FILMES',
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-
-                      TopRatedMovieList(),
-
                     ],
                   ),
                 ),
@@ -227,90 +147,133 @@ class MovieCard extends StatelessWidget {
   }
 }
 
-
-
-class TopRatedMovieList extends StatefulWidget {
+class Header extends StatefulWidget {
   @override
-  _TopRatedMovieListState createState() => _TopRatedMovieListState();
+  _HeaderState createState() => _HeaderState();
 }
 
-class _TopRatedMovieListState extends State<TopRatedMovieList> {
-  final controller = MovieViewModel();
-  var _listController = ScrollController();
-
+class _HeaderState extends State<Header> {
+  DateTime now = DateTime.now();
   @override
-
-
-  void initState() {
-    super.initState();
-controller.loadRatedMovie();
-
-    _listController.addListener(() {
-      final pixel = _listController.position.pixels;
-      if (pixel == _listController.position.maxScrollExtent) {
-        controller.updateRatedList();
-      }
-    });
-  }
-
   Widget build(BuildContext context) {
-
-    return StreamBuilder<TopRatedMovie>(
-      stream: controller.streamTopRatedMovie.stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.active) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasData) {
-          return Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            height: MediaQuery.of(context).size.height * 0.5,
-            padding: EdgeInsets.only(top: 15),
-            child: ListView.separated(
-
-
-                controller: _listController,
-                scrollDirection: Axis.horizontal,
-
-                separatorBuilder: (context, index) => VerticalDivider(
-                      width: 20,
-                    ),
-                itemCount: snapshot.data.ratedmovies.length,
-                itemBuilder: (context, indexRated) {
-
-                  if (indexRated == snapshot.data.ratedmovies.length - 1) {
-                    controller.updateRatedList();
-                  }
-                  return InkWell(
-
-                    highlightColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    child: Card(
-                        color: Colors.black,
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Image.network(
-                          'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[indexRated].poster_path}',
-                          fit: BoxFit.fill,
-                        )),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  TopRatedMoviesDetailsView(snapshot.data.ratedmovies[indexRated])));
-                    },
-                  );
-                }),
-          );
-        }
-        return Container();
-      },
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.04,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Movie App',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  textAlign: TextAlign.left,
+                ),
+                Divider(),
+                Text(
+                  'Hoje, ${DateFormat.MMMd('pt_BR').format(now)}',
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w100,
+                      fontSize: 15),
+                )
+              ],
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.25,
+            ),
+            CircleAvatar(
+              backgroundImage: NetworkImage(
+                  'https://ih0.redbubble.net/image.618385909.1713/flat,1000x1000,075,f.u2.jpg'),
+              backgroundColor: Colors.black,
+              radius: 30,
+            )
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+        Row(
+          children: [
+            Text(
+              '     EM BREVE',
+              style: TextStyle(color: Colors.white),
+            ),
+            Divider()
+          ],
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+      ],
     );
   }
-
 }
 
+// class TopRatedMovieList extends StatefulWidget {
+//   @override
+//   _TopRatedMovieListState createState() => _TopRatedMovieListState();
+// }
+//
+// class _TopRatedMovieListState extends State<TopRatedMovieList> {
+//   final controller = MovieViewModel();
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     controller.loadRatedMovie();
+//   }
+//
+//   Widget build(BuildContext context) {
+//     return StreamBuilder<TopRatedMovie>(
+//       stream: controller.streamTopRatedMovie.stream,
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState != ConnectionState.active) {
+//           return Center(
+//             child: CircularProgressIndicator(),
+//           );
+//         }
+//         if (snapshot.hasData) {
+//           return Container(
+//             width: MediaQuery.of(context).size.width * 0.8,
+//             height: MediaQuery.of(context).size.height * 0.5,
+//             padding: EdgeInsets.only(top: 15),
+//             child: ListView.separated(
+//                 scrollDirection: Axis.horizontal,
+//                 separatorBuilder: (context, index) => VerticalDivider(
+//                       width: 20,
+//                     ),
+//                 itemCount: snapshot.data.ratedmovies.length,
+//                 itemBuilder: (context, indexRated) {
+//                   if (indexRated == snapshot.data.ratedmovies.length - 1) {
+//                     controller.updateRatedList();
+//                   }
+//                   return InkWell(
+//                     highlightColor: Colors.transparent,
+//                     hoverColor: Colors.transparent,
+//                     child: Card(
+//                         color: Colors.black,
+//                         clipBehavior: Clip.antiAlias,
+//                         shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(15)),
+//                         child: Image.network(
+//                           'https://image.tmdb.org/t/p/w300${snapshot.data.ratedmovies[indexRated].poster_path}',
+//                           fit: BoxFit.fill,
+//                         )),
+//                     onTap: () {
+//                       Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                               builder: (context) => TopRatedMoviesDetailsView(
+//                                   snapshot.data.ratedmovies[indexRated])));
+//                     },
+//                   );
+//                 }),
+//           );
+//         }
+//         return Container();
+//       },
+//     );
+//   }
+// }

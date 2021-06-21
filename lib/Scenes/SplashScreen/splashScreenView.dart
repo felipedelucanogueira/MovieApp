@@ -24,7 +24,7 @@ class _SplashScreenViewState extends State<SplashScreenView> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 4),(){
+    Future.delayed(Duration(seconds: 3),(){
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => MovieView()));
     });

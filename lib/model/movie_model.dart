@@ -23,12 +23,6 @@ class MovieModel {
     internalStorage.saveMovie(id, saveMovie.toMap());
   }
 
-  saveBestMovies(int idb) async{
-      await internalStorage.saveBestMovies(idb);
-  }
-    deleteBestMovies(int idb) async{
-        await internalStorage.deleteMovie(idb);
-    }
 
   //
   // saveFavorite(List<Map<String, dynamic>> data) async{
@@ -48,11 +42,7 @@ class MovieModel {
     return movieResult.title;
   }
 
-  Future<int> getBestMovieId(int id) async {
-     final idb = await internalStorage.getBestMovieId(id);
 
-     return idb;
-  }
 
   deleteMovie(int id) async {
     await internalStorage.deleteMovie(id);

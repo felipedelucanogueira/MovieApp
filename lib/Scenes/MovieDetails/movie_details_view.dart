@@ -67,9 +67,7 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                                     isFavorite ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart,
                                     color: isFavorite ? Colors.red : Colors.white,
                                   ));
-
                              },
-
                           ),
                           Text(
                             'Favoritar',
@@ -115,7 +113,12 @@ class _MovieDetailsViewState extends State<MovieDetailsView> {
                               fit: StackFit.loose,
                               children: [
                                 Image.network(
-                                    'https://image.tmdb.org/t/p/w300${widget.movie.poster_path}'),
+                                  'https://image.tmdb.org/t/p/w300${widget.movie.poster_path}' ==
+                                      'https://image.tmdb.org/t/p/w300null'
+                                      ? 'https://www.freeshop.com.br/pdv/imagens/imagemindisponivel.png'
+                                      : 'https://image.tmdb.org/t/p/w300${widget.movie.poster_path}',
+                                  fit: BoxFit.fill,
+                                ),
                               ],
                             )))
                   ],

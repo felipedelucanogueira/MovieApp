@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
           hoverColor: Colors.transparent,
         ),
       debugShowCheckedModeBanner: false,
-
-      home:MovieView()
+      home:SplashScreenView()
     );
   }
 }

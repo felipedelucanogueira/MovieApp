@@ -46,30 +46,30 @@ class SharedPreferencesAdapter extends InternalStorageAdapter {
   }
 
 
-   saveBestMovies(int id) async {
-     final internalPref = await _prefs;
-     await internalPref.setInt('$id', id);
-     print(id);
-     print('Filme Salvo');
-
-   }
-
-    deleteBestMovies(int id) async {
-     final internalPref = await _prefs;
-      await internalPref.remove('$id');
-
-      print(id);
-     print('Filme deletado');
-   }
-
-  @override
-  Future<int> getBestMovieId(int idb) async {
-   final internalPref = await _prefs;
-    int id = internalPref.getInt('id');
-
-    return id;
-
-  }
+  //  saveBestMovies(int id) async {
+  //    final internalPref = await _prefs;
+  //    await internalPref.setInt('$id', id);
+  //    print(id);
+  //    print('Filme Salvo');
+  //
+  //  }
+  //
+  //   deleteBestMovies(int id) async {
+  //    final internalPref = await _prefs;
+  //     await internalPref.remove('$id');
+  //
+  //     print(id);
+  //    print('Filme deletado');
+  //  }
+  //
+  // @override
+  // Future<int> getBestMovieId(int idb) async {
+  //  final internalPref = await _prefs;
+  //   int id = internalPref.getInt('id');
+  //
+  //   return id;
+  //
+  // }
 
   //  Future<String> getMovieId(int id,String name) async {
   //    final internalPref = await _prefs;
