@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/movie_view.dart';
+import 'package:movie_app/Scenes/SplashScreen/splashScreenView.dart';
+import 'package:movie_app/Scenes/moviesHome/movie_view.dart';
 
 void main() {
   runApp(MyApp());
+
 }
-
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
           hoverColor: Colors.transparent,
         ),
       debugShowCheckedModeBanner: false,
-
-      home:MovieView()
+      home:SplashScreenView()
     );
   }
 }
+

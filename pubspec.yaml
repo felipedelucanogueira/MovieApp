@@ -29,6 +29,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   http: ^0.13.2
+  font_awesome_flutter: ^9.1.0
+  sqflite: ^2.0.0+3
+  shared_preferences: ^2.0.6
+  intl:
+  rive:
 
 
 dev_dependencies:
@@ -47,8 +52,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - zombie.riv
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
